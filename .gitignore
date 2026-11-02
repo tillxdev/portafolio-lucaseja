@@ -29,6 +29,8 @@ env/
 
 # Ignorar archivo de variables de entorno
 .env
+.env.*
+!.env.example
 
 # Ignorar solo el archivo de instrucciones del agente
 /src/context/agents.md
