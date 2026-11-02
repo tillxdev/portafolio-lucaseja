@@ -7,6 +7,7 @@
 
 .contact-container h2 {
   text-align: center;
+  font-size: 2.25rem;
   color: var(--text-primary);
 }
 
@@ -18,6 +19,7 @@
 }
 
 .contact-form {
+  position: relative;
   display: flex;
   flex-direction: column;
 }
@@ -112,6 +114,72 @@
   font-weight: bold;
 }
 
+.contact-container input[aria-invalid="true"],
+.contact-container textarea[aria-invalid="true"] {
+  border-color: #ef4444;
+}
+
+.contact-container .field-error {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  text-align: left;
+  color: #fca5a5;
+}
+
+[data-theme="light"] .contact-container .field-error {
+  color: #b91c1c;
+}
+
+.contact-container .form-status {
+  margin: 12px 0 0;
+  min-height: 1.5em;
+  font-size: 0.95rem;
+}
+
+.contact-container .form-status--success {
+  color: #86efac;
+}
+
+.contact-container .form-status--error,
+.contact-container .form-status--warning {
+  color: #fcd34d;
+}
+
+[data-theme="light"] .contact-container .form-status--success {
+  color: #15803d;
+}
+
+[data-theme="light"] .contact-container .form-status--error,
+[data-theme="light"] .contact-container .form-status--warning {
+  color: #b45309;
+}
+
+/* Campo trampa anti-spam: fuera de pantalla, sin display:none para que los bots lo vean */
+.contact-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contact-container .contact-alternatives {
+  margin: 20px 0 0;
+  font-size: 1rem;
+}
+
+.contact-alternatives a {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.contact-alternatives a:hover {
+  color: var(--accent-color-1);
+}
+
 @media (max-width: 768px) {
   .contact-container {
     width: 100%;
@@ -142,7 +210,7 @@
 
 @media (max-width: 480px) {
   .contact-container h2 {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     margin-bottom: 8px;
   }
 
