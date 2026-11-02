@@ -1,0 +1,29 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Cabeceras de seguridad para todo el sitio.
+# CSP: orígenes externos verificados con grep sobre src/ y dist/:
+#   - cdn.jsdelivr.net e img.icons8.com -> iconos de habilidades (img-src)
+#   - api.emailjs.com -> envío del formulario de contacto (connect-src)
+# El script inline de index.html (tema antes del primer pintado) se permite
+# por hash. Si se modifica ese script, recalcular el hash:
+#   python3 -c "import re,hashlib,base64;s=re.search(r'<script>(.*?)</script>',open('dist/index.html').read(),re.S).group(1);print(base64.b64encode(hashlib.sha256(s.encode()).digest()).decode())"
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-UFpZN9Q1guzspfyu675g5yknxAfOFKA4pFdm2G8FWAI='; style-src 'self'; img-src 'self' data: https://cdn.jsdelivr.net https://img.icons8.com; font-src 'self'; connect-src 'self' https://api.emailjs.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+
+# Archivos con hash en el nombre generados por Vite: caché inmutable.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
