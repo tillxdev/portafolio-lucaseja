@@ -41,7 +41,7 @@ export const Skills = () => {
     <section id="skills" className="skills-container glass-section section-shell">
       <div className="skills-wrapper">
         <h2 className="skills-header">Habilidades</h2>
-        <p className="skills-subtitle">Mi stack principal en producción</p>
+        <p className="skills-subtitle">Tecnologías con las que trabajo</p>
 
         <div className="skills-by-category">
           {CATEGORIES.map((category) => {

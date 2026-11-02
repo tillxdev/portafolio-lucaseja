@@ -7,8 +7,8 @@ Sitio publicado: <https://lucaseja.netlify.app/>
 ## Características
 
 - Diseño responsive con efecto glassmorphism y modo claro/oscuro (el tema se aplica antes del primer pintado, sin parpadeo).
-- Fondo animado y transiciones con Framer Motion.
-- Secciones de bienvenida, habilidades, proyectos, presentación, certificaciones y contacto.
+- Fondo animado y transiciones con CSS (respeta `prefers-reduced-motion`).
+- Secciones: inicio, proyectos, experiencia, habilidades, sobre mí, certificaciones y contacto.
 - Tarjetas y modales para consultar el detalle de los proyectos.
 - CV en PDF servido desde el propio sitio (`/CV-LucasEJA.pdf`).
 - Formulario de contacto integrado con EmailJS y notificaciones con React Toastify.
@@ -18,7 +18,7 @@ Sitio publicado: <https://lucaseja.netlify.app/>
 
 - React 18 + Vite 5
 - JavaScript (ES Modules)
-- Framer Motion, React Icons, React Toastify
+- React Icons, React Toastify
 - EmailJS
 - ESLint
 - Netlify (hosting, cabeceras de seguridad y caché)

@@ -3,7 +3,7 @@ export const EXPERIENCE_DATA = [
   {
     id: "freelance",
     role: "Desarrollador Full Stack Freelance",
-    organization: "Proyectos para clientes",
+    organization: "Negocios locales",
     location: "Piura, Perú",
     start: { label: "2024", dateTime: "2024" },
     end: { label: "Actualidad", dateTime: null },
@@ -24,8 +24,8 @@ export const EXPERIENCE_DATA = [
     end: { label: "Sep 2024", dateTime: "2024-09" },
     highlights: [
       "Desarrollo de una aplicación web para la gestión administrativa interna.",
-      "Diseño de flyers para difusión institucional.",
-      "Soporte técnico a usuarios y equipos."
+      "Diseño de material gráfico (flyers) para comunicación institucional.",
+      "Soporte técnico a usuarios y sistemas internos."
     ]
   }
 ];
