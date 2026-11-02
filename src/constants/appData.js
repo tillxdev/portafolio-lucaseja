@@ -1,36 +1,46 @@
-// URLs de redes sociales
+// Fuente única de datos de contacto y enlaces (coherente con el CV)
+export const CONTACT_INFO = {
+  email: "luja9575@gmail.com",
+  phone: "+51 992 693 788",
+  whatsappNumber: "51992693788",
+  location: "Piura, Perú"
+};
+
+// URLs de redes y recursos
 export const SOCIAL_LINKS = {
   github: "https://github.com/LucasEJA",
   linkedin: "https://www.linkedin.com/in/lucas-enmanuel-jacinto-alvarez-249324270/",
   instagram: "https://www.instagram.com/lucas_enmanuelp/profilecard/?igsh=Y3diNmJzcHI0MDB0",
-  cv: "https://canva.link/q07s4n52hz2ya48"
+  email: `mailto:${CONTACT_INFO.email}`,
+  whatsapp: `https://wa.me/${CONTACT_INFO.whatsappNumber}`,
+  cv: "/CV-LucasEJA.pdf"
 };
+
+// Nombre de archivo sugerido al descargar el CV
+export const CV_FILENAME = "CV-LucasEJA.pdf";
 
 // Información personal
 export const PERSONAL_INFO = {
   name: "Lucas Jacinto A.",
   fullName: "Lucas Enmanuel Jacinto Alvarez",
-  title: "Desarrollador Full Stack",
-  subtitle: "Apasionado por la tecnología",
-  university: "Universidad Nacional de Piura (2019-2024)",
-  profession: "Ingeniero Informático",
-  copyright: "Copyright © 2024, LucasEJA"
+  title: "Full Stack Developer",
+  headline: "Full Stack Developer · Node.js · React · PostgreSQL · Linux/VPS",
+  valueProposition:
+    "Desarrollo, despliego y mantengo aplicaciones web en producción de principio a fin para restaurantes, comercios e instituciones educativas.",
+  university: "Universidad Nacional de Piura (2019–2024)",
+  profession: "Bachiller en Ingeniería Informática",
+  copyrightOwner: "LucasEJA"
 };
 
-// Navegación
+// Navegación: mismo orden que las secciones de Body.jsx.
+// "Inicio" lo representa el logo del Navbar (inMenu: false) para que el menú
+// de escritorio quepa en una línea; sigue participando en el scroll spy.
 export const NAVIGATION_ITEMS = [
-  { href: "#welcome", label: "Inicio", icon: "FaHome" },
-  { href: "#aboutme", label: "Acerca de mi", icon: "FaUser" },
-  { href: "#projects", label: "Proyectos", icon: "FaProjectDiagram" },
-  { href: "#skills", label: "Habilidades", icon: "FaTools" },
-  { href: "#contact", label: "Contactame", icon: "FaEnvelope" }
-];
-
-// Habilidades personales
-export const SOFT_SKILLS = [
-  "Resolución Pragmática de Problemas",
-  "Trabajo en Equipo y Comunicación",
-  "Adaptabilidad a Nuevos Stacks",
-  "Orientación a Resultados y Métricas",
-  "Buenas Prácticas de Código Limpio"
+  { id: "welcome", label: "Inicio", inMenu: false },
+  { id: "projects", label: "Proyectos" },
+  { id: "experience", label: "Experiencia" },
+  { id: "skills", label: "Habilidades" },
+  { id: "aboutme", label: "Sobre mí" },
+  { id: "certifications", label: "Certificados" },
+  { id: "contact", label: "Contacto" }
 ];
