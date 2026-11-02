@@ -5,7 +5,8 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  z-index: 1000;
+  /* Por encima del navbar fijo (--z-fixed: 1030) */
+  z-index: var(--z-modal, 1050);
 }
 
 .modal-backdrop {
@@ -55,6 +56,15 @@
   transition: background var(--transition-fast), color var(--transition-fast);
 }
 
+.modal-dialog:focus {
+  outline: none;
+}
+
+.modal-close:focus-visible {
+  outline: 3px solid var(--focus-ring, #60a5fa);
+  outline-offset: 2px;
+}
+
 .modal-close:hover {
   background: var(--glass-bg-subtle);
   color: var(--text-primary);
@@ -83,6 +93,12 @@
 
 .modal-size-full {
   max-width: 95vw;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-dialog {
+    animation: none;
+  }
 }
 
 @keyframes modalFadeIn {
