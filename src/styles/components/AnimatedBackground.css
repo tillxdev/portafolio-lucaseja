@@ -37,8 +37,8 @@
     #1e293b 75%,
     #0f172a 100%
   );
-  background-size: 400% 400%;
-  animation: subtleGradient 20s ease infinite;
+  /* Estático: los temas usan el shorthand background (background-size auto),
+     así que animar background-position no tenía efecto visible y solo repintaba. */
 }
 
 .wave-layer {
@@ -99,7 +99,8 @@
 
 .code-particle {
   position: absolute;
-  font-size: 14px;
+  font-size: var(--particle-size, 14px);
+  opacity: var(--particle-opacity, 0.6);
   color: rgba(148, 163, 184, 0.6);
   font-family: "Fira Code", "Monaco", "Cascadia Code", monospace;
   animation: floatCode 25s linear infinite;
@@ -209,9 +210,16 @@
   animation-duration: 33s;
 }
 
-/* Destacar "Hola Mundo" y "Hello World!" */
-.code-particle:nth-child(10),
-.code-particle:nth-child(11) {
+.code-particle:nth-child(21) {
+  left: 50%;
+  animation-delay: -21s;
+  animation-duration: 31s;
+}
+
+/* Destacar "Hola Mundo" y "Hello World!" (posiciones 11 y 12 de CODE_SNIPPETS).
+   Especificidad mayor que [data-theme] .code-particle de los temas. */
+.code-particles .code-particle:nth-child(11),
+.code-particles .code-particle:nth-child(12) {
   color: rgba(99, 102, 241, 0.7);
   font-weight: 600;
   text-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
@@ -230,7 +238,8 @@
 
 .tech-symbol {
   position: absolute;
-  font-size: 18px;
+  font-size: var(--particle-size, 18px);
+  opacity: var(--particle-opacity, 0.5);
   color: rgba(139, 92, 246, 0.5);
   animation: floatSymbol 20s ease-in-out infinite;
   user-select: none;
@@ -301,7 +310,8 @@
 
 .programming-symbol {
   position: absolute;
-  font-size: 20px;
+  font-size: var(--particle-size, 20px);
+  opacity: var(--particle-opacity, 0.4);
   color: rgba(59, 130, 246, 0.4);
   animation: floatProgramming 30s ease-in-out infinite;
   user-select: none;
@@ -336,16 +346,6 @@
 }
 
 /* Animaciones suaves y profesionales */
-@keyframes subtleGradient {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
 @keyframes subtleFloat1 {
   0%,
   100% {
@@ -459,7 +459,6 @@
     height: 100%;
     min-height: inherit;
     max-height: inherit;
-    animation-duration: 30s;
   }
 
   .wave-1,
@@ -472,6 +471,23 @@
   .tech-symbol {
     font-size: 12px;
     opacity: 0.2;
+  }
+
+  /* Menos nodos animados y sin text-shadow en móvil (rendimiento) */
+  .animated-background .code-particles .code-particle,
+  .animated-background .tech-symbols .tech-symbol,
+  .animated-background .programming-symbols .programming-symbol {
+    text-shadow: none;
+  }
+
+  .code-particle:nth-child(n + 9),
+  .tech-symbol:nth-child(n + 6),
+  .programming-symbol:nth-child(n + 3) {
+    display: none;
+  }
+
+  .wave-layer {
+    filter: none;
   }
 }
 
@@ -539,23 +555,23 @@
   }
 }
 
-/* Modo de movimiento reducido - Más estático y profesional */
+/* Modo de movimiento reducido: fondo estático (respeta el gradiente del tema) */
 @media (prefers-reduced-motion: reduce) {
-  .gradient-layer,
-  .wave-1,
-  .wave-2,
-  .wave-3,
-  .code-particle,
-  .tech-symbol {
+  .animated-background .wave-layer,
+  .animated-background .code-particle,
+  .animated-background .tech-symbol,
+  .animated-background .programming-symbol {
     animation: none;
   }
 
-  .gradient-layer {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  .animated-background .code-particle,
+  .animated-background .tech-symbol,
+  .animated-background .programming-symbol {
+    opacity: 0.1;
   }
 
-  .code-particle,
-  .tech-symbol {
-    opacity: 0.1;
+  /* Sin animación quedarían todas en el mismo punto: se muestran solo unas pocas */
+  .animated-background .code-particle {
+    display: none;
   }
 }

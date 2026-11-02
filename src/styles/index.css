@@ -1,6 +1,5 @@
 /* Importar variables globales */
 @import './globals/variables.css';
-@import './globals/glass-effects.css';
 @import './globals/glassmorphism.css';
 
 /* Importar temas */
@@ -13,9 +12,17 @@
   min-width: 320px; /* Solo para pantallas muy pequeñas */
 }
 
-/* Prevenir desbordamiento horizontal global */
+/* Prevenir desbordamiento horizontal: solo medios (un max-width universal
+   podía recortar SVG y elementos posicionados) */
 * {
   box-sizing: border-box;
+}
+
+img,
+video,
+svg,
+canvas,
+iframe {
   max-width: 100%;
 }
 
@@ -39,9 +46,26 @@ html, body {
   box-sizing: border-box;
 }
 
-/* Mejoras de performance para animaciones */
-* {
-  will-change: auto;
+/* Enlace "Saltar al contenido": visible solo al recibir foco */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: calc(var(--z-tooltip, 1070) + 1);
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+  transform: translateY(-150%);
+  transition: transform 150ms ease-out;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 3px solid #fff;
+  outline-offset: 2px;
 }
 
 /* Optimización para dispositivos con preferencia de movimiento reducido */

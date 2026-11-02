@@ -35,33 +35,13 @@
   
   /* Cards y componentes */
   --card-bg: rgba(255, 255, 255, 0.1);
+
+  /* Anillo de foco (>5.7:1 sobre los fondos oscuros) */
+  --focus-ring: #60a5fa;
 }
 
-/* Ajustes específicos para elementos en modo oscuro */
-[data-theme="dark"] .animated-background .gradient-layer {
-  background: linear-gradient(135deg, 
-    #0f172a 0%,
-    #1e293b 25%,
-    #334155 50%,
-    #1e293b 75%,
-    #0f172a 100%
-  );
-}
-
-[data-theme="dark"] .code-particle {
-  color: rgba(148, 163, 184, 0.6);
-  text-shadow: 0 0 10px rgba(148, 163, 184, 0.3);
-}
-
-[data-theme="dark"] .tech-symbol {
-  color: rgba(139, 92, 246, 0.5);
-  text-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
-}
-
-[data-theme="dark"] .programming-symbol {
-  color: rgba(59, 130, 246, 0.4);
-  text-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
-}
+/* El gradiente y los colores de partículas del tema oscuro son los valores
+   por defecto de AnimatedBackground.css (no se duplican aquí). */
 
 /* Ondas para modo oscuro */
 [data-theme="dark"] .wave-1 {

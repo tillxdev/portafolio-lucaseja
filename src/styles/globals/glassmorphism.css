@@ -24,34 +24,11 @@
   --theme-text-secondary: var(--text-secondary);
 }
 
-/* Clases base de glassmorphism */
-.glass-base {
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  background: var(--glass-bg-base);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-  transition: all var(--transition-normal);
-}
-
-/* Niveles de intensidad */
-.glass-subtle {
-  backdrop-filter: blur(var(--glass-blur-subtle));
-  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
-  background: var(--glass-bg-subtle);
-  border: 1px solid var(--glass-border-subtle);
-  box-shadow: var(--glass-shadow-subtle);
-}
-
-.glass-intense {
-  backdrop-filter: blur(var(--glass-blur-intense));
-  -webkit-backdrop-filter: blur(var(--glass-blur-intense));
-  background: var(--glass-bg-intense);
-  border: 1px solid var(--glass-border-intense);
-  box-shadow: var(--glass-shadow-intense);
-}
-
-/* Componentes específicos */
+/* Componentes específicos.
+   Rendimiento: solo los contenedores (sección, navbar, footer, modal) aplican
+   backdrop-filter. Las tarjetas, badges y botones viven dentro de un
+   .glass-section ya desenfocado; un segundo blur anidado no aporta nada visible
+   (su backdrop root es la sección) y se recalcula en cada frame del fondo animado. */
 .glass-card {
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
@@ -97,8 +74,6 @@
 }
 
 .glass-project-card {
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
   background: var(--glass-bg-base);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
@@ -115,8 +90,6 @@
 }
 
 .glass-skill-card {
-  backdrop-filter: blur(var(--glass-blur-subtle));
-  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
   background: var(--glass-bg-subtle);
   border: 1px solid var(--glass-border-subtle);
   box-shadow: var(--glass-shadow-subtle);
@@ -132,8 +105,8 @@
 }
 
 .glass-tech-badge {
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   background: var(--glass-bg-subtle);
   border: 1px solid var(--glass-border-subtle);
   transition: all var(--transition-fast);
@@ -145,12 +118,12 @@
   transform: translateY(-1px);
 }
 
+/* Degradado con contraste AA (>= 4.5:1) para texto blanco en todo el recorrido:
+   #2563eb 5.17:1, #6d28d9 7.10:1; hover #1d4ed8 6.70:1, #5b21b6 8.98:1. */
 .glass-button {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  background: linear-gradient(135deg, var(--accent-color-1), var(--accent-color-2));
-  border: 1px solid var(--accent-color-1);
-  color: white;
+  background: linear-gradient(135deg, #2563eb, #6d28d9);
+  border: 1px solid #2563eb;
+  color: #fff;
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
@@ -172,28 +145,32 @@
 }
 
 .glass-button:hover {
-  background: linear-gradient(135deg, var(--accent-color-2), var(--accent-color-3));
-  border-color: var(--accent-color-2);
+  background: linear-gradient(135deg, #1d4ed8, #5b21b6);
+  border-color: #1d4ed8;
+  color: #fff;
   transform: translateY(-3px);
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
 }
 
-/* Estados hover mejorados */
-.glass-hover {
-  transition: all var(--transition-normal);
+/* Foco visible en todos los elementos interactivos (tras los resets outline:none) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+  outline: 3px solid var(--focus-ring, #60a5fa);
+  outline-offset: 2px;
 }
 
-.glass-hover:hover {
-  background: var(--glass-bg-intense);
-  border-color: var(--glass-border-intense);
-  transform: translateY(-2px);
+.glass-button:focus-visible {
+  outline: 3px solid var(--focus-ring, #60a5fa);
+  outline-offset: 3px;
 }
 
 /* Fallbacks para navegadores sin soporte */
 @supports not (backdrop-filter: blur(10px)) {
-  .glass-base,
-  .glass-subtle,
-  .glass-intense,
   .glass-card,
   .glass-navbar,
   .glass-footer,
@@ -208,7 +185,6 @@
 
 /* Optimización para dispositivos móviles */
 @media (max-width: 768px) {
-  .glass-base,
   .glass-card,
   .glass-section {
     backdrop-filter: blur(3px);
@@ -222,15 +198,20 @@
 
 /* Modo de movimiento reducido */
 @media (prefers-reduced-motion: reduce) {
-  .glass-base,
   .glass-card,
   .glass-project-card,
-  .glass-hover {
+  .glass-skill-card,
+  .glass-button {
     transition: none;
   }
-  
+
   .glass-project-card:hover,
-  .glass-hover:hover {
+  .glass-skill-card:hover,
+  .glass-button:hover {
     transform: none;
+  }
+
+  .glass-button::before {
+    display: none;
   }
 }

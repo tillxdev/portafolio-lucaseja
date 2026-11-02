@@ -5,8 +5,7 @@
     border-radius: var(--radius-lg);
     border: 1px solid var(--glass-border);
     transition: all var(--transition-normal);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    /* Sin backdrop-filter: la tarjeta está dentro de .glass-section (ya desenfocada) */
 }
 
 .card-container:hover {
