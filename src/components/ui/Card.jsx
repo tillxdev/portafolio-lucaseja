@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import '../../styles/components/Card.css';
 
@@ -9,8 +8,11 @@ export const Card = ({ iconUrl, skillName, className = '' }) => {
         <img
           src={iconUrl}
           className="card-icon"
-          alt={`${skillName} icon`}
+          alt=""
+          width="80"
+          height="80"
           loading="lazy"
+          decoding="async"
         />
         <p className="card-text">{skillName}</p>
       </div>

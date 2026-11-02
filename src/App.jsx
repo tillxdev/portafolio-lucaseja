@@ -11,9 +11,13 @@ function App() {
   return (
     <ThemeProvider>
       <Loader />
+      <a className="skip-link" href="#welcome">
+        Saltar al contenido
+      </a>
       <AnimatedBackground />
-      <ThemeToggle />
       <Principal />
+      {/* Fijo en pantalla: va después del contenido para no ser el primer Tab */}
+      <ThemeToggle />
       <ToastContainer
         position="top-right"
         autoClose={5000}

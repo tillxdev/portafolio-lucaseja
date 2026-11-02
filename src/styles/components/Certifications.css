@@ -31,7 +31,7 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  backdrop-filter: blur(10px);
+  /* Sin backdrop-filter: anidada dentro de .glass-section */
   transition: all 0.3s ease;
   width: 100%;
   max-width: none;
@@ -95,10 +95,12 @@
   flex-shrink: 0;
   margin-left: 1rem;
   padding: 0.5rem 1rem;
-  background: rgba(var(--color-primary-rgb), 0.1);
-  border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+  /* --color-primary no está definida en ningún tema: se usan tokens existentes */
+  background: var(--glass-bg-subtle);
+  border: 1px solid var(--glass-border);
   border-radius: 8px;
-  color: var(--color-primary);
+  color: var(--text-primary);
+  text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
@@ -110,8 +112,8 @@
 }
 
 .certification-compact-button:hover {
-  background: rgba(var(--color-primary-rgb), 0.2);
-  border-color: rgba(var(--color-primary-rgb), 0.4);
+  background: var(--glass-bg-intense);
+  border-color: var(--accent-color-1);
   transform: translateY(-1px);
 }
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { PiCertificateFill } from 'react-icons/pi';
 import { HiExternalLink } from 'react-icons/hi';
@@ -8,22 +7,16 @@ export const CardCertification = ({
     title,
     institution,
     duration,
-    startDate,
-    endDate,
     certificateUrl,
-    skills = [],
     icon: IconComponent = PiCertificateFill,
     className = ''
 }) => {
-    const handleViewCertificate = () => {
-        window.open(certificateUrl, '_blank');
-    };
-
+    // startDate, endDate y skills se aceptan por compatibilidad (ver propTypes) pero no se muestran.
     return (
         <div className={`card-certification-compact ${className}`}>
             {/* Icono lateral */}
             <div className="certification-compact-icon">
-                <IconComponent size={40} />
+                <IconComponent size={40} aria-hidden="true" />
             </div>
 
             <div className="certification-compact-content">
@@ -35,14 +28,16 @@ export const CardCertification = ({
                     </div>
                 </div>
 
-                <button
-                    onClick={handleViewCertificate}
+                <a
+                    href={certificateUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="certification-compact-button"
-                    aria-label={`Ver certificado de ${title}`}
+                    aria-label={`Ver certificado de ${title} (se abre en una pestaña nueva)`}
                 >
                     <span>Ver PDF</span>
-                    <HiExternalLink size={14} />
-                </button>
+                    <HiExternalLink size={14} aria-hidden="true" />
+                </a>
             </div>
         </div>
     );
@@ -52,8 +47,8 @@ CardCertification.propTypes = {
     title: PropTypes.string.isRequired,
     institution: PropTypes.string.isRequired,
     duration: PropTypes.string.isRequired,
-    startDate: PropTypes.string.isRequired,
-    endDate: PropTypes.string.isRequired,
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
     certificateUrl: PropTypes.string.isRequired,
     skills: PropTypes.arrayOf(PropTypes.string),
     icon: PropTypes.elementType,

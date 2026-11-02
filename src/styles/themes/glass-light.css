@@ -35,6 +35,9 @@
   
   /* Cards y componentes */
   --card-bg: rgba(255, 255, 255, 0.5);
+
+  /* Anillo de foco (6.4:1 sobre el fondo claro) */
+  --focus-ring: #1d4ed8;
 }
 
 /* Ajustes específicos para elementos en modo claro */
@@ -80,14 +83,15 @@
 }
 
 /* Ajustes para mejor contraste en modo claro */
+/* Fondo más denso: el texto #f8fafc pasa de ~4.4:1 a >7:1 (AA) */
 [data-theme="light"] .glass-navbar {
-  background: rgba(71, 85, 105, 0.8);
+  background: rgba(51, 65, 85, 0.9);
   border-bottom: 1px solid rgba(71, 85, 105, 0.3);
   box-shadow: 0 2px 20px rgba(71, 85, 105, 0.2);
 }
 
 [data-theme="light"] .glass-footer {
-  background: rgba(71, 85, 105, 0.7);
+  background: rgba(51, 65, 85, 0.9);
   border-top: 1px solid rgba(71, 85, 105, 0.3);
   box-shadow: 0 -2px 20px rgba(71, 85, 105, 0.15);
 }
@@ -98,9 +102,16 @@
   color: #f8fafc !important;
 }
 
+/* Hover: blanco + subrayado (antes #cbd5e1, 3.29:1) */
 [data-theme="light"] .glass-navbar a:hover {
-  color: #cbd5e1 !important;
+  color: #ffffff !important;
   background: rgba(255, 255, 255, 0.1);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+[data-theme="light"] .glass-navbar {
+  --focus-ring: #ffffff;
 }
 
 /* Textos del footer en modo claro */
@@ -110,7 +121,13 @@
 }
 
 [data-theme="light"] .glass-footer a:hover {
-  color: #cbd5e1 !important;
+  color: #ffffff !important;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+[data-theme="light"] .glass-footer {
+  --focus-ring: #ffffff;
 }
 
 [data-theme="light"] .glass-project-card {

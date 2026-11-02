@@ -32,7 +32,6 @@
   
   /* Reset button styles */
   border: 1px solid var(--glass-border);
-  outline: none;
 }
 
 /* Estados hover y focus */
@@ -43,8 +42,8 @@
   box-shadow: var(--glass-shadow-intense);
 }
 
-.theme-toggle:focus {
-  outline: 2px solid var(--accent-color-1);
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--focus-ring, #60a5fa);
   outline-offset: 2px;
 }
 
@@ -172,7 +171,7 @@
     background: var(--theme-bg-primary);
   }
   
-  .theme-toggle:focus {
-    outline: 3px solid var(--accent-color-1);
+  .theme-toggle:focus-visible {
+    outline: 3px solid var(--focus-ring, #60a5fa);
   }
 }
