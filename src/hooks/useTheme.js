@@ -1,80 +1,84 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+// La clave de localStorage y el atributo data-theme en <html> no deben cambiar:
+// el script anti-flash de index.html depende de ellos.
+const STORAGE_KEY = 'portfolio-theme';
+const THEMES = ['dark', 'light'];
+const DARK_QUERY = '(prefers-color-scheme: dark)';
+
+const isValidTheme = (value) => THEMES.includes(value);
+
+const readStoredTheme = () => {
+  try {
+    const value = window.localStorage.getItem(STORAGE_KEY);
+    return isValidTheme(value) ? value : null;
+  } catch {
+    return null;
+  }
+};
+
+const storeTheme = (value) => {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, value);
+  } catch {
+    // Almacenamiento bloqueado: el tema se mantiene solo en esta sesión.
+  }
+};
+
+const getSystemTheme = () => {
+  try {
+    return window.matchMedia(DARK_QUERY).matches ? 'dark' : 'light';
+  } catch {
+    return 'dark';
+  }
+};
 
 export const useTheme = () => {
-  // Intentar obtener el tema del localStorage, por defecto 'dark'
   const [theme, setTheme] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('portfolio-theme');
-      if (savedTheme) {
-        return savedTheme;
-      }
-      
-      // Detectar preferencia del sistema
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      return prefersDark ? 'dark' : 'light';
-    }
-    return 'dark';
+    if (typeof window === 'undefined') return 'dark';
+    return readStoredTheme() ?? getSystemTheme();
   });
 
-  // Aplicar el tema al documento
+  // Aplicar el tema al documento. No se persiste aquí: solo cuando el usuario elige,
+  // para que el listener del sistema siga activo mientras no haya elección explícita.
   useEffect(() => {
-    const root = document.documentElement;
-    
-    // Remover tema anterior
-    root.removeAttribute('data-theme');
-    
-    // Aplicar nuevo tema
-    root.setAttribute('data-theme', theme);
-    
-    // Guardar en localStorage
-    localStorage.setItem('portfolio-theme', theme);
-    
-    // Opcional: Actualizar meta theme-color para móviles
+    document.documentElement.setAttribute('data-theme', theme);
+
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
-      metaThemeColor.setAttribute(
-        'content', 
-        theme === 'dark' ? '#0f172a' : '#f8fafc'
-      );
+      metaThemeColor.setAttribute('content', theme === 'dark' ? '#0f172a' : '#f8fafc');
     }
   }, [theme]);
 
-  // Función para cambiar tema
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
-  };
-
-  // Función para establecer tema específico
-  const setSpecificTheme = (newTheme) => {
-    if (newTheme === 'dark' || newTheme === 'light') {
-      setTheme(newTheme);
-    }
-  };
-
-  // Detectar cambios en la preferencia del sistema
+  // Seguir prefers-color-scheme mientras el usuario no haya elegido un tema.
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleChange = (e) => {
-      // Solo cambiar automáticamente si no hay una preferencia guardada
-      const savedTheme = localStorage.getItem('portfolio-theme');
-      if (!savedTheme) {
-        setTheme(e.matches ? 'dark' : 'light');
+    let mediaQuery;
+    try {
+      mediaQuery = window.matchMedia(DARK_QUERY);
+    } catch {
+      return undefined;
+    }
+
+    const handleChange = (event) => {
+      if (!readStoredTheme()) {
+        setTheme(event.matches ? 'dark' : 'light');
       }
     };
 
     mediaQuery.addEventListener('change', handleChange);
-    
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-    };
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  return {
-    theme,
-    toggleTheme,
-    setSpecificTheme,
-    isDark: theme === 'dark',
-    isLight: theme === 'light'
-  };
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      storeTheme(next);
+      return next;
+    });
+  }, []);
+
+  return useMemo(
+    () => ({ theme, toggleTheme, isDark: theme === 'dark' }),
+    [theme, toggleTheme]
+  );
 };

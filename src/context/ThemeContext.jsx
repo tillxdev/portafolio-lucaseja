@@ -1,19 +1,7 @@
-import React, { createContext, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { useTheme } from '../hooks/useTheme';
+import { ThemeContext } from './themeContextValue';
 
-// Crear el contexto
-const ThemeContext = createContext();
-
-// Hook para usar el contexto
-export const useThemeContext = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useThemeContext debe usarse dentro de un ThemeProvider');
-  }
-  return context;
-};
-
-// Provider del tema
 export const ThemeProvider = ({ children }) => {
   const themeValues = useTheme();
 
@@ -22,4 +10,8 @@ export const ThemeProvider = ({ children }) => {
       {children}
     </ThemeContext.Provider>
   );
+};
+
+ThemeProvider.propTypes = {
+  children: PropTypes.node,
 };

@@ -1,18 +1,18 @@
-import React from 'react';
-import { useThemeContext } from '../../context/ThemeContext';
+import { useThemeContext } from '../../hooks/useThemeContext';
 import '../../styles/components/ThemeToggle.css';
 
 export const ThemeToggle = () => {
-  const { theme, toggleTheme, isDark } = useThemeContext();
+  const { toggleTheme, isDark } = useThemeContext();
 
   return (
     <button
+      type="button"
       className="theme-toggle"
       onClick={toggleTheme}
       aria-label={`Cambiar a modo ${isDark ? 'claro' : 'oscuro'}`}
       title={`Cambiar a modo ${isDark ? 'claro' : 'oscuro'}`}
     >
-      <div className="theme-toggle-icon">
+      <div className="theme-toggle-icon" aria-hidden="true">
         {isDark ? (
           // Icono de sol para cambiar a modo claro
           <svg 
@@ -46,7 +46,7 @@ export const ThemeToggle = () => {
       </div>
       
       {/* Indicador visual del tema actual */}
-      <div className="theme-indicator">
+      <div className="theme-indicator" aria-hidden="true">
         <span className="theme-label">
           {isDark ? 'Oscuro' : 'Claro'}
         </span>
