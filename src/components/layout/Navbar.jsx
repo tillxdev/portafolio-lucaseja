@@ -1,13 +1,34 @@
 import { useState, useEffect, useRef } from 'react';
-import { FaHome, FaUser, FaProjectDiagram, FaTools, FaEnvelope, FaCertificate, FaFileDownload } from 'react-icons/fa';
+import {
+    FaUser,
+    FaProjectDiagram,
+    FaTools,
+    FaEnvelope,
+    FaCertificate,
+    FaBriefcase,
+    FaFileDownload
+} from 'react-icons/fa';
+import { NAVIGATION_ITEMS, SOCIAL_LINKS, CV_FILENAME } from '../../constants/appData';
 import '../../styles/components/Navbar.css';
+
+const NAV_ICONS = {
+    projects: FaProjectDiagram,
+    experience: FaBriefcase,
+    skills: FaTools,
+    aboutme: FaUser,
+    certifications: FaCertificate,
+    contact: FaEnvelope
+};
+
+const MOBILE_BREAKPOINT = 767;
+const MENU_ITEMS = NAVIGATION_ITEMS.filter((item) => item.inMenu !== false);
 
 export const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('welcome');
     const navbarRef = useRef(null);
     const menuButtonRef = useRef(null);
-    
+
     const toggleMenu = () => {
         setIsMenuOpen(prev => !prev);
     };
@@ -19,37 +40,35 @@ export const Navbar = () => {
     // Cerrar menú al presionar Escape y trampar foco (Focus Trap)
     useEffect(() => {
         if (!isMenuOpen) return;
-        
+
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') {
                 closeMenu();
                 menuButtonRef.current?.focus();
                 return;
             }
-            
+
             if (e.key === 'Tab') {
                 const focusableElements = navbarRef.current?.querySelectorAll(
                     'a[href], button:not([disabled])'
                 );
                 if (!focusableElements || focusableElements.length === 0) return;
-                
+
                 const firstElement = focusableElements[0];
                 const lastElement = focusableElements[focusableElements.length - 1];
-                
+
                 if (e.shiftKey) {
                     if (document.activeElement === firstElement) {
                         lastElement.focus();
                         e.preventDefault();
                     }
-                } else {
-                    if (document.activeElement === lastElement) {
-                        firstElement.focus();
-                        e.preventDefault();
-                    }
+                } else if (document.activeElement === lastElement) {
+                    firstElement.focus();
+                    e.preventDefault();
                 }
             }
         };
-        
+
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [isMenuOpen]);
@@ -57,13 +76,13 @@ export const Navbar = () => {
     // Cerrar menú al hacer clic fuera del Navbar
     useEffect(() => {
         if (!isMenuOpen) return;
-        
+
         const handleOutsideClick = (e) => {
             if (navbarRef.current && !navbarRef.current.contains(e.target)) {
                 closeMenu();
             }
         };
-        
+
         document.addEventListener('click', handleOutsideClick);
         document.addEventListener('touchstart', handleOutsideClick);
         return () => {
@@ -72,66 +91,76 @@ export const Navbar = () => {
         };
     }, [isMenuOpen]);
 
-    // Bloquear scroll del body en pantallas móviles al abrir el menú
+    // Bloquear scroll del body solo mientras el menú móvil está abierto.
+    // Guarda el overflow previo y lo restaura, sin pisar bloqueos ajenos (Loader, Modal).
     useEffect(() => {
-        const checkAndToggleScroll = () => {
-            if (isMenuOpen && window.innerWidth <= 767) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
+        if (!isMenuOpen) return;
+
+        const { style } = document.body;
+        const previousOverflow = style.overflow;
+        let locked = false;
+
+        const sync = () => {
+            const shouldLock = window.innerWidth <= MOBILE_BREAKPOINT;
+            if (shouldLock && !locked) {
+                style.overflow = 'hidden';
+                locked = true;
+            } else if (!shouldLock && locked) {
+                style.overflow = previousOverflow;
+                locked = false;
             }
         };
 
-        checkAndToggleScroll();
-        window.addEventListener('resize', checkAndToggleScroll);
-        
+        sync();
+        window.addEventListener('resize', sync);
+
         return () => {
-            document.body.style.overflow = '';
-            window.removeEventListener('resize', checkAndToggleScroll);
+            window.removeEventListener('resize', sync);
+            if (locked) {
+                style.overflow = previousOverflow;
+            }
         };
     }, [isMenuOpen]);
 
     // Scroll Spy: Observar qué sección está visible para marcarla en el menú
     useEffect(() => {
-        const sectionIds = ['welcome', 'aboutme', 'projects', 'skills', 'certifications', 'contact'];
-        
-        const observerOptions = {
-            root: null,
-            rootMargin: '-30% 0px -50% 0px', // Activar cuando esté bien centrada en la pantalla
-            threshold: 0
-        };
-        
-        const handleIntersect = (entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    setActiveSection(entry.target.id);
-                }
-            });
-        };
-        
-        const observer = new IntersectionObserver(handleIntersect, observerOptions);
-        
-        sectionIds.forEach(id => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setActiveSection(entry.target.id);
+                    }
+                });
+            },
+            { root: null, rootMargin: '-30% 0px -50% 0px', threshold: 0 }
+        );
+
+        NAVIGATION_ITEMS.forEach(({ id }) => {
             const element = document.getElementById(id);
             if (element) {
                 observer.observe(element);
             }
         });
-        
-        return () => {
-            observer.disconnect();
-        };
+
+        return () => observer.disconnect();
     }, []);
 
     return (
         <nav ref={navbarRef} className="navbar glass-navbar" aria-label="Navegación principal">
             <div className="navbar-logo">
-                <a href="#welcome" onClick={closeMenu}>LucasEJA</a>
+                <a
+                    href="#welcome"
+                    onClick={closeMenu}
+                    aria-label="LucasEJA, ir al inicio"
+                    aria-current={activeSection === 'welcome' ? 'location' : undefined}
+                >
+                    LucasEJA
+                </a>
             </div>
 
-            <button 
+            <button
                 ref={menuButtonRef}
-                className={`navbar-menu-icon ${isMenuOpen ? 'open' : ''}`} 
+                className={`navbar-menu-icon ${isMenuOpen ? 'open' : ''}`}
                 onClick={toggleMenu}
                 aria-label={isMenuOpen ? "Cerrar menú principal" : "Abrir menú principal"}
                 aria-expanded={isMenuOpen}
@@ -143,83 +172,38 @@ export const Navbar = () => {
                 <span className="bar"></span>
             </button>
 
-            <div 
-                id="navbar-menu-links" 
+            <div
+                id="navbar-menu-links"
                 className={`navbar-links ${isMenuOpen ? 'open' : ''}`}
             >
                 <ul>
-                    <li>
-                        <a 
-                            href="#welcome" 
-                            className={activeSection === 'welcome' ? 'active' : ''}
-                            onClick={closeMenu}
-                        >
-                            <FaHome className="icon" size={20} color="#fff" />
-                            Inicio
-                        </a>
-                    </li>
-                    <li>
-                        <a 
-                            href="#aboutme" 
-                            className={activeSection === 'aboutme' ? 'active' : ''}
-                            onClick={closeMenu}
-                        >
-                            <FaUser className="icon" size={20} color="#fff" />
-                            Acerca de mi
-                        </a>
-                    </li>
-                    <li>
-                        <a 
-                            href="#projects" 
-                            className={activeSection === 'projects' ? 'active' : ''}
-                            onClick={closeMenu}
-                        >
-                            <FaProjectDiagram className="icon" size={20} color="#fff" />
-                            Proyectos
-                        </a>
-                    </li>
-                    <li>
-                        <a 
-                            href="#skills" 
-                            className={activeSection === 'skills' ? 'active' : ''}
-                            onClick={closeMenu}
-                        >
-                            <FaTools className="icon" size={20} color="#fff" />
-                            Habilidades
-                        </a>
-                    </li>
-                    <li>
-                        <a 
-                            href="#certifications" 
-                            className={activeSection === 'certifications' ? 'active' : ''}
-                            onClick={closeMenu}
-                        >
-                            <FaCertificate className="icon" size={20} color="#fff" />
-                            Certificados
-                        </a>
-                    </li>
-                    <li>
-                        <a 
-                            href="#contact" 
-                            className={activeSection === 'contact' ? 'active' : ''}
-                            onClick={closeMenu}
-                        >
-                            <FaEnvelope className="icon" size={20} color="#fff" />
-                            Contactame
-                        </a>
-                    </li>
+                    {MENU_ITEMS.map(({ id, label }) => {
+                        const Icon = NAV_ICONS[id];
+                        const isActive = activeSection === id;
+                        return (
+                            <li key={id}>
+                                <a
+                                    href={`#${id}`}
+                                    className={isActive ? 'active' : ''}
+                                    aria-current={isActive ? 'location' : undefined}
+                                    onClick={closeMenu}
+                                >
+                                    {Icon && <Icon className="icon" size={20} aria-hidden="true" />}
+                                    {label}
+                                </a>
+                            </li>
+                        );
+                    })}
                 </ul>
                 <div className="navbar-cv-button">
-                    <a 
-                        href="https://www.canva.com/design/DAGV7V5MqQs/wF7hV91lCGykyNKE8yIVrA/edit?utm_content=DAGV7V5MqQs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Descargar mi CV"
-                        title="Abrir CV en nueva pestaña"
+                    <a
+                        href={SOCIAL_LINKS.cv}
+                        download={CV_FILENAME}
+                        title="Descargar CV en PDF"
                         className="cv-btn"
                         onClick={closeMenu}
                     >
-                        <FaFileDownload className="icon" size={18} />
+                        <FaFileDownload className="icon" size={18} aria-hidden="true" />
                         Mi CV
                     </a>
                 </div>
