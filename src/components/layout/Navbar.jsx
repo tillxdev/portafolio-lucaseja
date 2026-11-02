@@ -20,7 +20,7 @@ const NAV_ICONS = {
     contact: FaEnvelope
 };
 
-const MOBILE_BREAKPOINT = 767;
+const MOBILE_BREAKPOINT = 1100; // debajo de esto el menú de 6 ítems no cabe en una línea
 const MENU_ITEMS = NAVIGATION_ITEMS.filter((item) => item.inMenu !== false);
 
 export const Navbar = () => {
