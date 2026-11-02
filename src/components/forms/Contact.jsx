@@ -1,11 +1,12 @@
 import { useId, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { toast } from 'react-toastify';
+import { CONTACT_INFO, SOCIAL_LINKS } from '../../constants/appData';
 import '../../styles/components/Contact.css';
 
-// Canales directos de respaldo (la rama de datos los centralizará en constants/appData.js).
-const CONTACT_EMAIL = 'luja9575@gmail.com';
-const WHATSAPP_URL = 'https://wa.me/51992693788';
+// Canales directos de respaldo (fuente única: constants/appData.js).
+const CONTACT_EMAIL = CONTACT_INFO.email;
+const WHATSAPP_URL = SOCIAL_LINKS.whatsapp;
 
 const EMAILJS_CONFIG = {
     serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
