@@ -1,201 +1,144 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { PERSONAL_INFO } from '../../constants/appData';
 import '../../styles/components/Loader.css';
 
 const WORD = 'LucasEJA';
 const LETTERS = WORD.split('');
-const POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
-const STAGGER = 0.24;
-const TICK_MS = 42;
-const TOTAL_MS = 240;
-const FILL_MS = 3600;
-const EXIT_MS = 4600;
-const MIN_SHOW_MS = 2600;
-const EXIT_EASE = [0.76, 0, 0.24, 1];
 const STORAGE_KEY = 'lucaseja_loader_seen';
+// Tiempo máximo que se espera al evento load antes de iniciar la salida.
+const MAX_WAIT_MS = 200;
+// Duración de la transición de salida definida en Loader.css (+ margen).
+const EXIT_MS = 360;
 
-const randomChar = () => POOL[Math.floor(Math.random() * POOL.length)];
-
-const ScrambleLetter = ({ char, delay, reduceMotion }) => {
-  const [display, setDisplay] = useState('\u00a0');
-  const [locked, setLocked] = useState(false);
-
-  useEffect(() => {
-    if (char === ' ' || reduceMotion) {
-      setDisplay(char === ' ' ? '\u00a0' : char);
-      setLocked(true);
-      return undefined;
-    }
-
-    let elapsed = 0;
-    let timerId;
-
-    const tick = () => {
-      elapsed += TICK_MS;
-      if (elapsed >= TOTAL_MS) {
-        setDisplay(char);
-        setLocked(true);
-        return;
-      }
-
-      setDisplay(randomChar());
-      timerId = window.setTimeout(tick, TICK_MS);
-    };
-
-    const startId = window.setTimeout(() => {
-      timerId = window.setTimeout(tick, TICK_MS);
-    }, delay * 1000);
-
-    return () => {
-      window.clearTimeout(startId);
-      window.clearTimeout(timerId);
-    };
-  }, [char, delay, reduceMotion]);
-
-  if (char === ' ') {
-    return <span aria-hidden="true" className="loader-space" />;
+const prefersReducedMotion = () => {
+  try {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  } catch {
+    return false;
   }
-
-  const letterClass = locked ? 'loader-letter is-locked' : 'loader-letter is-scrambling';
-
-  return (
-    <motion.span aria-hidden="true" className={letterClass}>
-      {display}
-    </motion.span>
-  );
 };
 
+const wasSeen = () => {
+  try {
+    return Boolean(window.sessionStorage.getItem(STORAGE_KEY));
+  } catch {
+    return false;
+  }
+};
+
+const markSeen = () => {
+  try {
+    window.sessionStorage.setItem(STORAGE_KEY, 'true');
+  } catch {
+    // Almacenamiento bloqueado: el loader simplemente volverá a mostrarse.
+  }
+};
+
+const shouldShow = () =>
+  typeof window !== 'undefined' && !prefersReducedMotion() && !wasSeen();
+
+/**
+ * Pantalla de bienvenida breve, solo CSS. Se oculta en cuanto la página
+ * termina de cargar (máx. ~600 ms en total). No bloquea el scroll ni se
+ * muestra con prefers-reduced-motion.
+ */
 export const Loader = () => {
-  const prefersReducedMotion = useReducedMotion();
-  const [done, setDone] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const subtitleDelay = useMemo(() => LETTERS.length * STAGGER + 0.2, []);
+  const [phase, setPhase] = useState(() => (shouldShow() ? 'visible' : 'done'));
 
   useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
+    if (phase !== 'visible') return undefined;
 
-    if (window.sessionStorage.getItem(STORAGE_KEY)) {
-      setDone(true);
-      return undefined;
+    let frameId;
+    let started = false;
+    const startExit = () => {
+      if (started) return;
+      started = true;
+      frameId = window.requestAnimationFrame(() => setPhase('leaving'));
+    };
+
+    const waitId = window.setTimeout(startExit, MAX_WAIT_MS);
+    if (document.readyState === 'complete') {
+      startExit();
+    } else {
+      window.addEventListener('load', startExit, { once: true });
     }
-
-    const body = document.body;
-    const previousOverflow = body.style.overflow;
-    body.style.overflow = 'hidden';
-
-    if (prefersReducedMotion) {
-      setProgress(100);
-    }
-
-    const start = Date.now();
-    const exitDelay = prefersReducedMotion ? 900 : EXIT_MS;
-
-    const barTick = window.setInterval(() => {
-      const value = prefersReducedMotion
-        ? 100
-        : Math.min(Math.floor(((Date.now() - start) / FILL_MS) * 100), 100);
-
-      setProgress(value);
-
-      if (value >= 100) {
-        window.clearInterval(barTick);
-      }
-    }, 20);
-
-    const exitTimer = window.setTimeout(() => {
-      body.style.overflow = previousOverflow;
-      window.sessionStorage.setItem(STORAGE_KEY, 'true');
-      setDone(true);
-    }, Math.max(exitDelay, MIN_SHOW_MS));
 
     return () => {
-      window.clearInterval(barTick);
-      window.clearTimeout(exitTimer);
-      body.style.overflow = previousOverflow;
+      window.clearTimeout(waitId);
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener('load', startExit);
     };
-  }, [prefersReducedMotion]);
+  }, [phase]);
 
-  if (typeof document === 'undefined') {
+  useEffect(() => {
+    if (phase !== 'leaving') return undefined;
+    const doneId = window.setTimeout(() => {
+      markSeen();
+      setPhase('done');
+    }, EXIT_MS);
+    return () => window.clearTimeout(doneId);
+  }, [phase]);
+
+  if (phase === 'done' || typeof document === 'undefined') {
     return null;
   }
 
   return createPortal(
-    <AnimatePresence>
-      {!done && (
-        <motion.div
-          className="loader-overlay"
-          role="status"
-          aria-live="polite"
-          aria-label="Cargando el portafolio de LucasEJA"
-          aria-busy="true"
-          exit={{ y: '-100%' }}
-          transition={{ duration: 0.92, ease: EXIT_EASE }}
-        >
-          <svg
-            className="loader-pattern"
-            aria-hidden="true"
-            viewBox="0 0 1000 1000"
-            preserveAspectRatio="xMidYMid slice"
+    <div
+      className={`loader-overlay${phase === 'leaving' ? ' is-leaving' : ''}`}
+      aria-hidden="true"
+    >
+      <svg
+        className="loader-pattern"
+        viewBox="0 0 1000 1000"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <defs>
+          <pattern
+            id="loaderPattern"
+            patternUnits="userSpaceOnUse"
+            width="120"
+            height="120"
+            patternTransform="translate(60 60)"
           >
-            <defs>
-              <pattern
-                id="loaderPattern"
-                patternUnits="userSpaceOnUse"
-                width="120"
-                height="120"
-                patternTransform="translate(60 60)"
-              >
-                <g transform="translate(60 60)">
-                  {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-                    <circle
-                      key={`petal-${i}`}
-                      cx={18 * Math.cos((i * Math.PI) / 4)}
-                      cy={18 * Math.sin((i * Math.PI) / 4)}
-                      r={12}
-                    />
-                  ))}
-                  <polygon points="40 0 0 40 -40 0 0 -40" />
-                </g>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#loaderPattern)" />
-          </svg>
+            <g transform="translate(60 60)">
+              {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+                <circle
+                  key={`petal-${i}`}
+                  cx={18 * Math.cos((i * Math.PI) / 4)}
+                  cy={18 * Math.sin((i * Math.PI) / 4)}
+                  r={12}
+                />
+              ))}
+              <polygon points="40 0 0 40 -40 0 0 -40" />
+            </g>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#loaderPattern)" />
+      </svg>
 
-          <h1 className="loader-title" style={{ fontSize: 'clamp(40px, 9vw, 96px)' }}>
-            {LETTERS.map((char, index) => (
-              <ScrambleLetter
-                key={`${char}-${index}`}
-                char={char}
-                delay={index * STAGGER}
-                reduceMotion={prefersReducedMotion}
-              />
-            ))}
-          </h1>
-
-          <motion.p
-            className="loader-subtitle"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: subtitleDelay, duration: 0.8 }}
+      <div className="loader-title">
+        {LETTERS.map((char, index) => (
+          <span
+            key={`${char}-${index}`}
+            className="loader-letter"
+            style={{ '--i': index }}
           >
-            Desarrollador de Software
-          </motion.p>
+            {char}
+          </span>
+        ))}
+      </div>
 
-          <div className="loader-footer">
-            <div className="loader-footer-row">
-              <span className="loader-label">Cargando experiencia</span>
-              <span className="loader-progress">{String(progress).padStart(3, '0')}%</span>
-            </div>
-            <motion.div
-              className="loader-bar"
-              animate={{ scaleX: progress / 100 }}
-              transition={{ ease: 'easeOut', duration: 0.08 }}
-            />
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>,
+      <p className="loader-subtitle">{PERSONAL_INFO.title}</p>
+
+      <div className="loader-footer">
+        <div className="loader-footer-row">
+          <span className="loader-label">Cargando experiencia</span>
+        </div>
+        <div className="loader-bar" />
+      </div>
+    </div>,
     document.body
   );
 };
