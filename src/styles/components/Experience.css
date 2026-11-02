@@ -1,0 +1,198 @@
+/* Sección Experiencia: línea de tiempo + educación e idiomas */
+#experience {
+  scroll-margin-top: calc(var(--nav-height) + 20px);
+}
+
+.experience-container {
+  background-color: var(--theme-bg-secondary);
+  border-radius: 8px;
+  width: 100%;
+  gap: var(--spacing-2xl);
+}
+
+.experience-header {
+  font-size: 2.25rem;
+  color: var(--text-primary);
+  text-align: center;
+  margin: 0;
+}
+
+.experience-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+/* Línea vertical */
+.experience-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 19px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--accent-color-1), var(--accent-color-2));
+  opacity: 0.6;
+}
+
+.experience-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: var(--spacing-lg);
+  align-items: start;
+}
+
+.experience-marker {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-color-1), var(--accent-color-2));
+  box-shadow: var(--shadow-md);
+}
+
+.experience-card {
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.experience-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.experience-role {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.experience-org {
+  margin: 0;
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.experience-dates {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.experience-highlights {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.experience-highlights li::marker {
+  color: var(--accent-color-1);
+}
+
+/* Educación e idiomas */
+.experience-extra {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--spacing-xl);
+}
+
+.experience-extra-block {
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.experience-extra-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+}
+
+.experience-extra-title svg {
+  color: var(--accent-color-1);
+}
+
+.experience-extra-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.experience-extra-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--text-secondary);
+}
+
+.experience-extra-list strong {
+  color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .experience-header {
+    font-size: 1.875rem;
+  }
+
+  .experience-card,
+  .experience-extra-block {
+    padding: var(--spacing-lg);
+  }
+
+  .experience-role {
+    font-size: var(--font-size-lg);
+  }
+
+  .experience-highlights {
+    font-size: var(--font-size-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .experience-timeline::before {
+    left: 15px;
+  }
+
+  .experience-item {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .experience-marker {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+
+  .experience-card,
+  .experience-extra-block {
+    padding: var(--spacing-md);
+  }
+}
