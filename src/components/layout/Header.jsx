@@ -1,5 +1,9 @@
 import { Navbar } from './Navbar';
 
 export const Header = () => {
-  return <Navbar />;
+  return (
+    <header>
+      <Navbar />
+    </header>
+  );
 };

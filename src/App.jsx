@@ -11,7 +11,7 @@ function App() {
   return (
     <ThemeProvider>
       <Loader />
-      <a className="skip-link" href="#welcome">
+      <a className="skip-link" href="#main">
         Saltar al contenido
       </a>
       <AnimatedBackground />

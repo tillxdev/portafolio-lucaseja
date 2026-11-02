@@ -5,7 +5,7 @@ import '../styles/components/Body.css';
 // Orden pensado para reclutadores; Navbar (NAVIGATION_ITEMS) sigue el mismo orden.
 export const Body = () => {
   return (
-    <main>
+    <main id="main" tabIndex={-1}>
       <Welcome />
       <Projects />
       <Experience />
