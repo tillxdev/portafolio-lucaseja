@@ -1,4 +1,3 @@
-import React from 'react';
 import '../../styles/components/Certifications.css';
 import { CardCertification } from '../ui/CardCertification';
 import { CERTIFICATIONS_DATA } from '../../constants/certificationsData';
