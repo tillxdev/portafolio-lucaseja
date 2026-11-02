@@ -4,6 +4,9 @@
   --primary-bg: #0f172a;
   --secondary-bg: #1e293b;
   --accent-color-1: #3b82f6;
+  /* Usadas por Certifications.css y antes sin definir */
+  --color-primary: var(--accent-color-1);
+  --color-primary-rgb: 59, 130, 246;
   --accent-color-2: #8b5cf6;
   --accent-color-3: #06b6d4;
   --dark-bg: #0c1b1b;

@@ -83,8 +83,6 @@
     color: var(--text-secondary);
     font-weight: var(--font-weight-medium);
     transition: all var(--transition-fast);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
   }
   
   .tech-badge:hover {
