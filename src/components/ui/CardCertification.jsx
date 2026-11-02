@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { PiCertificateFill } from 'react-icons/pi';
 import { HiExternalLink } from 'react-icons/hi';
-import '../../styles/components/CardProject.css';
+import '../../styles/components/Certifications.css';
 
 export const CardCertification = ({
     title,

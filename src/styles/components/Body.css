@@ -12,7 +12,6 @@ main {
   gap: var(--section-gap);
   overflow-x: hidden; /* Prevenir scroll horizontal */
   box-sizing: border-box;
-  scroll-snap-type: y mandatory;
 }
 
 /* Base para todas las secciones */

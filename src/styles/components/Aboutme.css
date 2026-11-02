@@ -23,7 +23,7 @@
 }
 
 .about-me-paragraph {
-  text-align: justify;
+  text-align: left;
   color: var(--text-secondary);
   font-size: clamp(0.95rem, 1.4vw, 1.05rem);
   line-height: 1.6;
